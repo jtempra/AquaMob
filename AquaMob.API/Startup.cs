@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AquaMob.Core.Interfaces;
+using AquaMob.Infraestructure.Data;
+using AquaMob.Infraestructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace AquaMob.API
 {
@@ -26,6 +23,17 @@ namespace AquaMob.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // registrem el data context amb sql
+
+            services.AddDbContext<DataContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("Defaultconnection"));
+            });
+
+            // registrem el repo generic
+
+            services.AddTransient<IGenericRepository<T>, GenericRepository<T>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
